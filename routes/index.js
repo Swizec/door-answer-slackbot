@@ -71,8 +71,8 @@ router.post('/call', function (req, res, next) {
 
     twiml.record({
         action: `/call/recording/${callSid}`,
-        transcribe: true,
-        transcribeCallback: `/call/recording/${callSid}`,
+        //transcribe: true,
+        //transcribeCallback: `/call/recording/${callSid}`,
         maxLength: 60
     });
 
@@ -91,6 +91,7 @@ router.post('/call/recording/:callSid', (req, res, next) => {
             title: 'Somebody is at the door',
             title_link: recordingUrl,
             text: 'Click link to hear the recording',
+            callback_id: `door_open:${callSid}`,
             actions: [
                 {
                     name: 'open_door',
@@ -109,12 +110,27 @@ router.post('/call/recording/:callSid', (req, res, next) => {
     };
 
     webSlack.chat.postMessage('#bot-testing', '', data, () => {
-        twiml.say('Thank you', {voice: 'alice'});
-        twiml.hangup(callSid);
+        twiml.say('Thank you. Please hold.', {voice: 'alice'});
+        twiml.pause(240);
 
         res.type('text/xml');
         res.send(twiml.toString());
     });
+});
+
+router.post('/slack/response', (req, res, next) => {
+    const callSid = req.body.callback_id.split(':')[1];
+    const action = req.body.actions[0];
+    const twiml = new twilio.TwimlResponse();
+
+    if (action.value === 'open_door') {
+        //twiml.say
+        console.log(callSid, 'open_door');
+    }else{
+        console.log(callSid, 'deny_access');
+    }
+
+    res.send('OK');
 });
 
 module.exports = router;
