@@ -12,19 +12,10 @@ const CLIENT_EVENTS = require('@slack/client').CLIENT_EVENTS;
 const RtmClient = require('@slack/client').RtmClient,
       WebClient = require('@slack/client').WebClient;
 
-const rtm = new RtmClient(APItoken, {logLevel: 'error'}),
-      webSlack = new WebClient(APItoken);
-
-//rtm.start();
-
-//let CHANNELS = [],
-//    findChannel = (name) => _.find(CHANNELS, {name: name});
-
-//rtm.on(CLIENT_EVENTS.RTM.AUTHENTICATED, (rtmStartData) => {
-//    CHANNELS = rtmStartData.channels;
-//});
+const webSlack = new WebClient(APItoken);
 
 /* GET home page. */
+/* Used for testing only */
 router.get('/', function(req, res, next) {
     let recordingUrl = 'https://google.com';
 
@@ -51,16 +42,14 @@ router.get('/', function(req, res, next) {
         }]
     };
 
-    /* webSlack.chat.postMessage(findChannel('bot-testing'),
-       'test test',
-       data, () => { */
-
     webSlack.chat.postMessage('#bot-testing', '', data, () => {
 
         res.render('index', { title: 'Express' });
     });
 });
 
+/* When Twilio phone number is called */
+/* Step 1 */
 router.post('/call', function (req, res, next) {
     const caller = req.body.Caller;
     const callSid = req.body.CallSid;
@@ -80,6 +69,8 @@ router.post('/call', function (req, res, next) {
     res.send(twiml.toString());
 });
 
+/* When Twilio sends us the recording */
+/* Step 2 */
 router.post('/call/recording/:callSid', (req, res, next) => {
     const callSid = req.params.callSid;
     const twiml = new twilio.TwimlResponse();
@@ -109,6 +100,7 @@ router.post('/call/recording/:callSid', (req, res, next) => {
         }]
     };
 
+    /* Post on Slack, pause Twilio phone call */
     webSlack.chat.postMessage('#bot-testing', '', data, () => {
         twiml.say('Thank you. Please hold.', {voice: 'alice'});
         twiml.pause(240);
@@ -118,6 +110,8 @@ router.post('/call/recording/:callSid', (req, res, next) => {
     });
 });
 
+/* When button is clicked on Slack */
+/* Step 3 */
 router.post('/slack/response', (req, res, next) => {
     const callSid = req.body.callback_id.split(':')[1];
     const action = req.body.actions[0];
@@ -129,6 +123,8 @@ router.post('/slack/response', (req, res, next) => {
     }else{
         console.log(callSid, 'deny_access');
     }
+    
+    /* TODO: Say thank you and send dial tone to existing Twilio phone call identified by callSid */
 
     res.send('OK');
 });
