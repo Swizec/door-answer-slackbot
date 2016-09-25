@@ -4,6 +4,24 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var session = require('express-session'),
+    Grant = require('grant-express');
+
+var grant = new Grant({
+    server: {
+        protocol: 'https',
+        host: 'swizec.ngrok.io',
+        callback: '/callback',
+        transport: 'session',
+        state: true
+    },
+    slack: {
+        key: '14110144963.81022664631',
+        secret: '24df277cd8e3d24e32087885c6ee7c80',
+        scope: ['chat:write:bot', 'chat:write:user', 'channels:read', 'commands', 'incoming-webhook'],
+        //callback: '/connect/slack/callback'
+    }
+});
 
 var routes = require('./routes/index');
 var users = require('./routes/users');
@@ -21,6 +39,12 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+
+app.use(session({secret: 'grant',
+                 resave: false,
+                 saveUninitialized: true}));
+
+app.use(grant);
 
 app.use('/', routes);
 app.use('/users', users);

@@ -12,48 +12,52 @@ const CLIENT_EVENTS = require('@slack/client').CLIENT_EVENTS;
 const RtmClient = require('@slack/client').RtmClient,
       WebClient = require('@slack/client').WebClient;
 
-const rtm = new RtmClient(APItoken, {logLevel: 'error'}),
-      webSlack = new WebClient(APItoken);
+const webSlack = new WebClient(APItoken);
 
-//rtm.start();
-
-//let CHANNELS = [],
-//    findChannel = (name) => _.find(CHANNELS, {name: name});
-
-//rtm.on(CLIENT_EVENTS.RTM.AUTHENTICATED, (rtmStartData) => {
-//    CHANNELS = rtmStartData.channels;
-//});
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
     let recordingUrl = 'https://google.com';
 
     let data = {
-        attachments: [{
-            fallback: 'Somebody is at the door',
-            title: 'Somebody is at the door',
-            title_link: recordingUrl,
-            text: 'Click link to hear the recording',
-            actions: [
+    "text": "Would you like to play a game?",
+    "attachments": [
+        {
+            "text": "Choose a game to play",
+            "fallback": "You are unable to choose a game",
+            "callback_id": "wopr_game",
+            "color": "#3AA3E3",
+            "attachment_type": "default",
+            "actions": [
                 {
-                    name: 'open_door',
-                    text: 'Let them in',
-                    type: 'button',
-                    value: 'open_door'
+                    "name": "chess",
+                    "text": "Chess",
+                    "type": "button",
+                    "value": "chess"
                 },
                 {
-                    name: 'deny_access',
-                    text: 'Deny access',
-                    type: 'button',
-                    value: 'deny_access'
+                    "name": "maze",
+                    "text": "Falken's Maze",
+                    "type": "button",
+                    "value": "maze"
+                },
+                {
+                    "name": "war",
+                    "text": "Thermonuclear War",
+                    "style": "danger",
+                    "type": "button",
+                    "value": "war",
+                    "confirm": {
+                        "title": "Are you sure?",
+                        "text": "Wouldn't you prefer a good game of chess?",
+                        "ok_text": "Yes",
+                        "dismiss_text": "No"
+                    }
                 }
             ]
-        }]
-    };
-
-    /* webSlack.chat.postMessage(findChannel('bot-testing'),
-       'test test',
-       data, () => { */
+        }
+    ]
+}
 
     webSlack.chat.postMessage('#bot-testing', '', data, () => {
 
@@ -119,18 +123,22 @@ router.post('/call/recording/:callSid', (req, res, next) => {
 });
 
 router.post('/slack/response', (req, res, next) => {
-    const callSid = req.body.callback_id.split(':')[1];
-    const action = req.body.actions[0];
-    const twiml = new twilio.TwimlResponse();
+    /* const callSid = req.body.callback_id.split(':')[1];
+       const action = req.body.actions[0];
+       const twiml = new twilio.TwimlResponse();
 
-    if (action.value === 'open_door') {
-        //twiml.say
-        console.log(callSid, 'open_door');
-    }else{
-        console.log(callSid, 'deny_access');
-    }
+       if (action.value === 'open_door') {
+       //twiml.say
+       console.log(callSid, 'open_door');
+       }else{
+       console.log(callSid, 'deny_access');
+       } */
 
-    res.send('OK');
+    console.log(req.body);
+
+    res.send({
+        text: "pong"
+    });
 });
 
 module.exports = router;
