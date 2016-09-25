@@ -14,8 +14,8 @@ const RtmClient = require('@slack/client').RtmClient,
 
 const webSlack = new WebClient(APItoken);
 
-
 /* GET home page. */
+/* Used for testing only */
 router.get('/', function(req, res, next) {
     let recordingUrl = 'https://google.com';
 
@@ -65,6 +65,8 @@ router.get('/', function(req, res, next) {
     });
 });
 
+/* When Twilio phone number is called */
+/* Step 1 */
 router.post('/call', function (req, res, next) {
     const caller = req.body.Caller;
     const callSid = req.body.CallSid;
@@ -84,6 +86,8 @@ router.post('/call', function (req, res, next) {
     res.send(twiml.toString());
 });
 
+/* When Twilio sends us the recording */
+/* Step 2 */
 router.post('/call/recording/:callSid', (req, res, next) => {
     const callSid = req.params.callSid;
     const twiml = new twilio.TwimlResponse();
@@ -113,6 +117,7 @@ router.post('/call/recording/:callSid', (req, res, next) => {
         }]
     };
 
+    /* Post on Slack, pause Twilio phone call */
     webSlack.chat.postMessage('#bot-testing', '', data, () => {
         twiml.say('Thank you. Please hold.', {voice: 'alice'});
         twiml.pause(240);
@@ -122,17 +127,21 @@ router.post('/call/recording/:callSid', (req, res, next) => {
     });
 });
 
+/* When button is clicked on Slack */
+/* Step 3 */
 router.post('/slack/response', (req, res, next) => {
     /* const callSid = req.body.callback_id.split(':')[1];
        const action = req.body.actions[0];
        const twiml = new twilio.TwimlResponse();
 
-       if (action.value === 'open_door') {
-       //twiml.say
-       console.log(callSid, 'open_door');
-       }else{
-       console.log(callSid, 'deny_access');
-       } */
+    if (action.value === 'open_door') {
+        //twiml.say
+        console.log(callSid, 'open_door');
+    }else{
+        console.log(callSid, 'deny_access');
+    }
+    
+    /* TODO: Say thank you and send dial tone to existing Twilio phone call identified by callSid */
 
     console.log(req.body);
 
