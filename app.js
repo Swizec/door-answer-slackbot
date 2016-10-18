@@ -19,7 +19,7 @@ var grant = new Grant({
         key: '14110144963.81022664631',
         secret: '24df277cd8e3d24e32087885c6ee7c80',
         scope: ['chat:write:bot', 'chat:write:user', 'channels:read', 'commands', 'incoming-webhook'],
-        //callback: '/connect/slack/callback'
+        callback: '/handle_slack_callback'
     }
 });
 

@@ -12,7 +12,7 @@ const CLIENT_EVENTS = require('@slack/client').CLIENT_EVENTS;
 const RtmClient = require('@slack/client').RtmClient,
       WebClient = require('@slack/client').WebClient;
 
-const webSlack = new WebClient(APItoken);
+const webSlack = new WebClient('xoxp-14110144963-14113975712-83789381682-e6cf2e8e8b00aae694379656bab623a6');
 
 /* GET home page. */
 /* Used for testing only */
@@ -120,7 +120,8 @@ router.post('/call/recording/:callSid', (req, res, next) => {
     /* Post on Slack, pause Twilio phone call */
     webSlack.chat.postMessage('#bot-testing', '', data, () => {
         twiml.say('Thank you. Please hold.', {voice: 'alice'});
-        twiml.pause(240);
+        twiml.pause({length: 240});
+        twiml.say('Sorry, nobody pressed the button. Try calling a real human.', {voice: 'alice'});
 
         res.type('text/xml');
         res.send(twiml.toString());
@@ -130,24 +131,56 @@ router.post('/call/recording/:callSid', (req, res, next) => {
 /* When button is clicked on Slack */
 /* Step 3 */
 router.post('/slack/response', (req, res, next) => {
-    /* const callSid = req.body.callback_id.split(':')[1];
-       const action = req.body.actions[0];
-       const twiml = new twilio.TwimlResponse();
+    const payload = JSON.parse(req.body.payload);
+
+    const callSid = payload.callback_id.split(':')[1];
+    const action = payload.actions[0];
+    const client = twilio(settings.twilio.accountSid, settings.twilio.authToken);
+
+    let continueAt = '',
+        lettingIn = false;
 
     if (action.value === 'open_door') {
-        //twiml.say
-        console.log(callSid, 'open_door');
+        continueAt = 'call/open_the_door'
+        lettingIn = true;
     }else{
-        console.log(callSid, 'deny_access');
+        continueAt = 'call/dont_open_door';
+        lettingIn = false;
     }
-    
-    /* TODO: Say thank you and send dial tone to existing Twilio phone call identified by callSid */
 
-    console.log(req.body);
-
-    res.send({
-        text: "pong"
+    client.calls(callSid).update({
+        url: `https://swizec.ngrok.io/${continueAt}`,
+        method: 'POST'
+    }, (err, call) => {
+        res.send({
+            text: lettingIn ? "Letting them in" : "Telling them to go away"
+        });
     });
+});
+
+router.get('/handle_slack_callback', (req, res) => {
+    console.log(req.session.grant.response);
+
+    res.end(JSON.stringify(req.session.grant.response, null, 2));
+});
+
+router.post('/call/open_the_door', (req, res, next) => {
+    const twiml = new twilio.TwimlResponse();
+
+    twiml.say('Greetings! Come on up.', {voice: 'alice'});
+    twiml.play({digits: 9});
+
+    res.type('text/xml');
+    res.send(twiml.toString());
+});
+
+router.post('/call/dont_open_door', (req, res, next) => {
+    const twiml = new twilio.TwimlResponse();
+
+    twiml.say('Sorry, nobody pressed the button. Try calling a real human.', {voice: 'alice'});
+
+    res.type('text/xml');
+    res.send(twiml.toString());
 });
 
 module.exports = router;
