@@ -123,7 +123,6 @@ router.post('/slack/response', (req, res, next) => {
 router.get('/handle_slack_callback', (req, res) => {
     console.log(req.session.grant.response);
 
-    res.end(JSON.stringify(req.session.grant.response, null, 2));
     res.render('oauth_done', {
         access_token: req.session.grant.response.access_token,
         channel: req.session.grant.response.raw.incoming_webhook.channel,
