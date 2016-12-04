@@ -4,15 +4,14 @@ const twilio = require('twilio');
 
 let _ = require('lodash');
 
-let settings = require('../settings'),
-    APItoken = settings.slack_api_token;
+let settings = require('../settings');
 
 const CLIENT_EVENTS = require('@slack/client').CLIENT_EVENTS;
 
 const RtmClient = require('@slack/client').RtmClient,
       WebClient = require('@slack/client').WebClient;
 
-const webSlack = new WebClient('xoxp-14110144963-14113975712-83789381682-e6cf2e8e8b00aae694379656bab623a6');
+const webSlack = new WebClient(settings.slack.APIkey);
 
 /* GET home page. */
 /* Used for testing only */

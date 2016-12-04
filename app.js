@@ -7,6 +7,8 @@ var bodyParser = require('body-parser');
 var session = require('express-session'),
     Grant = require('grant-express');
 
+var settings = require('./settings');
+
 var grant = new Grant({
     server: {
         protocol: 'https',
@@ -16,8 +18,8 @@ var grant = new Grant({
         state: true
     },
     slack: {
-        key: '14110144963.81022664631',
-        secret: '24df277cd8e3d24e32087885c6ee7c80',
+        key: settings.slack.oauthKey,
+        secret: settings.slack.oauthSecret,
         scope: ['chat:write:bot', 'chat:write:user', 'channels:read', 'commands', 'incoming-webhook'],
         callback: '/handle_slack_callback'
     }
