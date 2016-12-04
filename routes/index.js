@@ -16,52 +16,7 @@ const webSlack = new WebClient(settings.slack.APIkey);
 /* GET home page. */
 /* Used for testing only */
 router.get('/', function(req, res, next) {
-    let recordingUrl = 'https://google.com';
-
-    let data = {
-    "text": "Would you like to play a game?",
-    "attachments": [
-        {
-            "text": "Choose a game to play",
-            "fallback": "You are unable to choose a game",
-            "callback_id": "wopr_game",
-            "color": "#3AA3E3",
-            "attachment_type": "default",
-            "actions": [
-                {
-                    "name": "chess",
-                    "text": "Chess",
-                    "type": "button",
-                    "value": "chess"
-                },
-                {
-                    "name": "maze",
-                    "text": "Falken's Maze",
-                    "type": "button",
-                    "value": "maze"
-                },
-                {
-                    "name": "war",
-                    "text": "Thermonuclear War",
-                    "style": "danger",
-                    "type": "button",
-                    "value": "war",
-                    "confirm": {
-                        "title": "Are you sure?",
-                        "text": "Wouldn't you prefer a good game of chess?",
-                        "ok_text": "Yes",
-                        "dismiss_text": "No"
-                    }
-                }
-            ]
-        }
-    ]
-}
-
-    webSlack.chat.postMessage('#bot-testing', '', data, () => {
-
-        res.render('index', { title: 'Express' });
-    });
+    res.render('index', { title: 'Express' });
 });
 
 /* When Twilio phone number is called */
@@ -148,7 +103,7 @@ router.post('/slack/response', (req, res, next) => {
     }
 
     client.calls(callSid).update({
-        url: `https://openmydoor.herokuapp.com/${continueAt}`,
+        url: `https://${settings.hostname}/${continueAt}`,
         method: 'POST'
     }, (err, call) => {
         res.send({

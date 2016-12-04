@@ -12,7 +12,7 @@ var settings = require('./settings');
 var grant = new Grant({
     server: {
         protocol: 'https',
-        host: 'openmydoor.herokuapp.com',
+        host: settings.hostname,
         callback: '/callback',
         transport: 'session',
         state: true
@@ -21,7 +21,9 @@ var grant = new Grant({
         key: settings.slack.oauthKey,
         secret: settings.slack.oauthSecret,
         scope: ['chat:write:bot', 'chat:write:user', 'channels:read', 'commands', 'incoming-webhook'],
-        callback: '/handle_slack_callback'
+        callback: '/handle_slack_callback',
+        protocol: 'https',
+        host: settings.hostname
     }
 });
 

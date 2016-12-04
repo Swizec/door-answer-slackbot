@@ -8,5 +8,6 @@ module.exports = {
     twilio: {
         accountSid: process.env.TWILIO_SID || '***REMOVED***',
         authToken: process.env.TWILIO_AUTH_TOKEN || '***REMOVED***'
-    }
+    },
+    hostname: process.env.HOSTNAME || 'swizec.ngrok.io'
 }
