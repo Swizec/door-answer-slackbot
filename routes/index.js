@@ -11,7 +11,7 @@ const CLIENT_EVENTS = require('@slack/client').CLIENT_EVENTS;
 const RtmClient = require('@slack/client').RtmClient,
       WebClient = require('@slack/client').WebClient;
 
-const webSlack = new WebClient(settings.slack.APIkey);
+const webSlack = new WebClient(settings.slack.APItoken);
 
 /* GET home page. */
 /* Used for testing only */
@@ -72,7 +72,7 @@ router.post('/call/recording/:callSid', (req, res, next) => {
     };
 
     /* Post on Slack, pause Twilio phone call */
-    webSlack.chat.postMessage('#bot-testing', '', data, (err, slackRes) => {
+    webSlack.chat.postMessage(settings.slack.channel, '', data, (err, slackRes) => {
         if (err) {
             console.log('Error: ', slackRes);
 
@@ -124,6 +124,11 @@ router.get('/handle_slack_callback', (req, res) => {
     console.log(req.session.grant.response);
 
     res.end(JSON.stringify(req.session.grant.response, null, 2));
+    res.render('oauth_done', {
+        access_token: req.session.grant.response.access_token,
+        channel: req.session.grant.response.raw.incoming_webhook.channel,
+        team_name: req.session.grant.response.raw.team_name
+    });
 });
 
 router.post('/call/open_the_door', (req, res, next) => {
