@@ -72,13 +72,13 @@ router.post('/call/recording/:callSid', (req, res, next) => {
     };
 
     /* Post on Slack, pause Twilio phone call */
-    webSlack.chat.postMessage('#bot-testing', '', data, (err, res) => {
+    webSlack.chat.postMessage('#bot-testing', '', data, (err, slackRes) => {
         if (err) {
-            console.log('Error: ', res);
+            console.log('Error: ', slackRes);
 
             twiml.say('Sorry, an error happened. Call a real human.', {voice: 'alice'});
         }else{
-            console.log('Message sent: ', res);
+            console.log('Message sent: ', slackRes);
 
             twiml.say('Thank you. Please hold.', {voice: 'alice'});
             twiml.pause({length: 240});
