@@ -148,7 +148,7 @@ router.post('/slack/response', (req, res, next) => {
     }
 
     client.calls(callSid).update({
-        url: `https://swizec.ngrok.io/${continueAt}`,
+        url: `https://openmydoor.herokuapp.com/${continueAt}`,
         method: 'POST'
     }, (err, call) => {
         res.send({

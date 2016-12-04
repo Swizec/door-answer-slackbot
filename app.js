@@ -12,7 +12,7 @@ var settings = require('./settings');
 var grant = new Grant({
     server: {
         protocol: 'https',
-        host: 'swizec.ngrok.io',
+        host: 'openmydoor.herokuapp.com',
         callback: '/callback',
         transport: 'session',
         state: true
