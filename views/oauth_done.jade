@@ -1,8 +1,9 @@
 extends layout
 
 block content
-  h1 You added OpenMyDoor to {team_name}
+  h1 You added OpenMyDoor to #{team_name}
   p Use these commands to finish setup
-  p pre
-    heroku config:set SLACK_API_TOKEN={access_token} -a openmydoor
-    heroku config:set SLACK_CHANNEL={index} -a openmydoor
+  p
+    pre
+      | heroku config:set SLACK_API_TOKEN=#{access_token} -a openmydoor
+      | heroku config:set SLACK_CHANNEL=#{index} -a openmydoor
