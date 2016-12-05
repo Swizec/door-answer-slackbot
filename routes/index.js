@@ -27,7 +27,7 @@ router.post('/call', function (req, res, next) {
 
     let twiml = new twilio.TwimlResponse();
 
-    twiml.say('Welcome to Yup! State your name after the beep, then press any key. Someone will let you in.', {voice: 'alice'});
+    twiml.say('Welcome to Yup! I\'m gonna ask someone to let you in. Please state your name after the beep, then press any key.', {voice: 'alice'});
 
     twiml.record({
         action: `/call/recording/${callSid}`,
@@ -49,10 +49,10 @@ router.post('/call/recording/:callSid', (req, res, next) => {
 
     let data = {
         attachments: [{
-            fallback: '@channel Somebody is at the door',
-            title: '@channel Somebody is at the door',
+            fallback: 'Somebody is at the door',
+            title: 'Somebody is at the door',
             title_link: recordingUrl,
-            text: 'Click link to hear the recording',
+            text: '@channel Click link to hear the recording',
             callback_id: `door_open:${callSid}`,
             actions: [
                 {
