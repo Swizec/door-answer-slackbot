@@ -27,7 +27,7 @@ router.post('/call', function (req, res, next) {
 
     let twiml = new twilio.TwimlResponse();
 
-    twiml.say('Hello! State your name, then press any key.', {voice: 'alice'});
+    twiml.say('Welcome to Yup! State your name after the beep, then press any key. Someone will let you in.', {voice: 'alice'});
 
     twiml.record({
         action: `/call/recording/${callSid}`,
@@ -49,8 +49,8 @@ router.post('/call/recording/:callSid', (req, res, next) => {
 
     let data = {
         attachments: [{
-            fallback: 'Somebody is at the door',
-            title: 'Somebody is at the door',
+            fallback: '@channel Somebody is at the door',
+            title: '@channel Somebody is at the door',
             title_link: recordingUrl,
             text: 'Click link to hear the recording',
             callback_id: `door_open:${callSid}`,
@@ -76,13 +76,13 @@ router.post('/call/recording/:callSid', (req, res, next) => {
         if (err) {
             console.log('Error: ', slackRes);
 
-            twiml.say('Sorry, an error happened. Call a real human.', {voice: 'alice'});
+            twiml.say('Sorry, something went wrong. Please call a real human.', {voice: 'alice'});
         }else{
             console.log('Message sent: ', slackRes);
 
             twiml.say('Thank you. Please hold.', {voice: 'alice'});
             twiml.pause({length: 240});
-            twiml.say('Sorry, nobody pressed the button. Try calling a real human.', {voice: 'alice'});
+            twiml.say('Sorry, nobody pressed the button on Slack. Please call a real human.', {voice: 'alice'});
         }
 
         res.type('text/xml');
@@ -133,7 +133,7 @@ router.get('/handle_slack_callback', (req, res) => {
 router.post('/call/open_the_door', (req, res, next) => {
     const twiml = new twilio.TwimlResponse();
 
-    twiml.say('Greetings! Come on up.', {voice: 'alice'});
+    twiml.say('Please take the elevator to the 4th flood. Follow the signs for Yup.', {voice: 'alice'});
     twiml.play({digits: 9});
 
     res.type('text/xml');
