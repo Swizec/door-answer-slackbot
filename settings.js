@@ -7,8 +7,8 @@ module.exports = {
         channel: process.env.SLACK_CHANNEL || '#bot-testing'
     },
     twilio: {
-        accountSid: process.env.TWILIO_SID || '***REMOVED***',
-        authToken: process.env.TWILIO_AUTH_TOKEN || '***REMOVED***'
+        accountSid: process.env.TWILIO_SID,
+        authToken: process.env.TWILIO_AUTH_TOKEN
     },
     hostname: process.env.HOSTNAME || 'swizec.ngrok.io'
 }
